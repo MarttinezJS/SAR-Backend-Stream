@@ -1,0 +1,70 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../generated/client"
+  binaryTargets = [env("PRISMA_BINARY")]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Devocionales {
+  id         Int       @id @default(autoincrement())
+  imagen_url String
+  fecha      DateTime? @default(now())
+}
+
+model Eventos {
+  id               Int               @id @default(autoincrement())
+  titulo           String
+  descripcion      String
+  estado           Evento_Estado
+  fecha_programada DateTime
+  duracion_dias    Int
+  Usuario_Eventos  Usuario_Eventos[]
+}
+
+model Noticias {
+  id          Int       @id @default(autoincrement())
+  imagen_url  String?
+  titulo      String
+  texto       String
+  createdDate DateTime? @default(now())
+}
+
+model Usuario_Eventos {
+  usuario_id Int
+  evento_id  Int
+  Eventos    Eventos  @relation(fields: [evento_id], references: [id])
+  Usuarios   Usuarios @relation(fields: [usuario_id], references: [id])
+
+  @@id([usuario_id, evento_id])
+  @@index([evento_id], map: "user_on_event_event_id_fkey")
+}
+
+model Usuarios {
+  id               Int               @id @default(autoincrement())
+  correo           String            @unique @db.VarChar(50)
+  usuario          String            @unique @db.VarChar(20)
+  rol              Rol
+  password         String
+  nombre           String            @db.VarChar(100)
+  apellido         String            @db.VarChar(100)
+  cambiar_password Boolean?          @default(false)
+  activo           Boolean?          @default(true)
+  Usuario_Eventos  Usuario_Eventos[]
+}
+
+enum Evento_Estado {
+  REALIZADO
+  PROGRAMADO
+  EN_PROCESO
+  CANCELADO
+  REPROGRAMADO
+}
+
+enum Rol {
+  USUARIO
+  ADMIN
+}
