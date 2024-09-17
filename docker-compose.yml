@@ -4,9 +4,11 @@ networks:
 
 services:
   autentication-backend:
-    container_name: sar-post-backend
-    image: sar-post-backend:1.0.0
+    container_name: sar-stream-backend
+    image: sar-stream-backend:1.0.0
     build: .
+    ports:
+      - "6000:80/tcp"
     restart: always
     volumes:
       - ~/SigueAdelanteRadio/posts/temp:/usr/app/generated/temp
@@ -14,13 +16,5 @@ services:
       - sigue-adelante-radio
     environment:
       PORT: 80
-      # PRODUCTION: true
       DATABASE_URL: $DATABASE_URL
-      VAULT_HOST: $VAULT_HOST
-      VAULT_PORT: $VAULT_PORT
-      ROLE_ID: $ROLE_ID
-      SECRET_ID: $SECRET_ID
-      CLOUDINARY_CLOUD_NAME: $CLOUDINARY_CLOUD_NAME
-      CLOUDINARY_API_KEY: $CLOUDINARY_API_KEY
-      CLOUDINARY_SECRET: $CLOUDINARY_SECRET
-    
+
