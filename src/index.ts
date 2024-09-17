@@ -6,6 +6,10 @@ import { hc } from "hono/client";
 const app = new Hono();
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 
+app.use("*", (c, next) => {
+  console.info(`${c.req.path} | ${c.req.method}`);
+  return next();
+});
 app.post("/webhook/playlist", webhookPlaylist);
 app.get(
   "/ws",
