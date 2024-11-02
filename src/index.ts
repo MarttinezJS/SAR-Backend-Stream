@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { onClose, onMessage, onOpen, webhookPlaylist } from "./controllers";
+import { azuraWebhook, onClose, onMessage, onOpen } from "./controllers";
 import { createBunWebSocket } from "hono/bun";
 import { hc } from "hono/client";
 
@@ -7,10 +7,10 @@ const app = new Hono();
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 
 app.use("*", (c, next) => {
-  console.info(`${c.req.path} | ${c.req.method}`);
+  console.info(`${new Date(Date.now())} ${c.req.path} | ${c.req.method}`);
   return next();
 });
-app.post("/webhook/playlist", webhookPlaylist);
+app.post("/webhook", azuraWebhook);
 app.get(
   "/ws",
   upgradeWebSocket((c) => {
@@ -33,5 +33,4 @@ const server = Bun.serve({
 
 const client = hc(`http://localhost:${Bun.env.PORT}`);
 export const socket = client.ws.$ws(0);
-
 console.info(`Listening on: ${server.port}`);

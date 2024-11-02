@@ -6,7 +6,9 @@ const topic = "song-history";
 export const onOpen = (event: Event, ws: WSContext<unknown>) => {
   const rawWs = ws.raw as ServerWebSocket;
   rawWs.subscribe(topic);
-  console.log(`Client connected | ${rawWs.remoteAddress}`);
+  console.log(
+    `${new Date(Date.now())} Client connected | ${rawWs.remoteAddress}`
+  );
 };
 
 export const onMessage = (
@@ -14,12 +16,14 @@ export const onMessage = (
   ws: WSContext<unknown>
 ) => {
   const rawWs = ws.raw as ServerWebSocket;
-  console.info(`${rawWs.remoteAddress} publish.`);
+  console.info(`${new Date(Date.now())} | ${rawWs.remoteAddress} publish.`);
   rawWs.publish(topic, event.data.toString());
 };
 
 export const onClose = (event: CloseEvent, ws: WSContext<unknown>) => {
   const rawWs = ws.raw as ServerWebSocket;
   rawWs.unsubscribe(topic);
-  console.info(`Client disconnected | ${rawWs.remoteAddress}`);
+  console.info(
+    `${new Date(Date.now())} Client disconnected | ${rawWs.remoteAddress}`
+  );
 };
