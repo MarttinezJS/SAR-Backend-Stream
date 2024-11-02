@@ -9,6 +9,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Puntos_Url {
+  id     Int      @id @default(autoincrement())
+  url    String
+  name   String   @map("nombre")
+  status Boolean? @default(true) @map("activo")
+}
+
 model Devocionales {
   id         Int       @id @default(autoincrement())
   imagen_url String
@@ -30,6 +37,7 @@ model Noticias {
   imagen_url  String?
   titulo      String
   texto       String
+  resumen     String
   createdDate DateTime? @default(now())
 }
 
@@ -54,6 +62,22 @@ model Usuarios {
   cambiar_password Boolean?          @default(false)
   activo           Boolean?          @default(true)
   Usuario_Eventos  Usuario_Eventos[]
+}
+
+model Partners {
+  id                  Int       @id @default(autoincrement())
+  imagen_url          String?
+  fecha_subscripcion  DateTime?
+  fecha_caducidad     DateTime?
+  activo              Boolean?  @default(false)
+  donacion            String?
+  descripcion_negocio String?
+  sitio_web           String?
+  empresa             String    @unique
+  nit                 String    @unique
+  representante       String
+  telefono            String
+  correo              String
 }
 
 enum Evento_Estado {
