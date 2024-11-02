@@ -1,5 +1,11 @@
 import { Hono } from "hono";
-import { azuraWebhook, onClose, onMessage, onOpen } from "./controllers";
+import {
+  azuraWebhook,
+  onClose,
+  onMessage,
+  onOpen,
+  pointsController,
+} from "./controllers";
 import { createBunWebSocket } from "hono/bun";
 import { hc } from "hono/client";
 
@@ -21,9 +27,7 @@ app.get(
     };
   })
 );
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
+app.get("/stream/points", pointsController);
 
 const server = Bun.serve({
   fetch: app.fetch,
