@@ -8,10 +8,11 @@ import {
 } from "./controllers";
 import { createBunWebSocket } from "hono/bun";
 import { hc } from "hono/client";
+import { initFirebase } from "./config";
 
 const app = new Hono();
 const { upgradeWebSocket, websocket } = createBunWebSocket();
-
+initFirebase();
 app.use("*", (c, next) => {
   console.info(`${new Date(Date.now())} ${c.req.path} | ${c.req.method}`);
   return next();

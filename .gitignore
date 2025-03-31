@@ -4,3 +4,5 @@ bun.lockb
 .env*
 src/generated/*
 generated/
+
+sigue-adelante-radio-firebase.json
