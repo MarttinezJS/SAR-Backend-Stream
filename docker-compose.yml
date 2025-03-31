@@ -3,7 +3,7 @@ networks:
     external: true
 
 services:
-  autentication-backend:
+  stream-backend:
     container_name: sar-stream-backend
     image: sar-stream-backend:1.0.0
     build: .

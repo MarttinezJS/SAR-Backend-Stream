@@ -37,8 +37,8 @@ model Noticias {
   imagen_url  String?
   titulo      String
   texto       String
-  resumen     String
   createdDate DateTime? @default(now())
+  resumen     String
 }
 
 model Usuario_Eventos {
@@ -78,6 +78,13 @@ model Partners {
   representante       String
   telefono            String
   correo              String
+}
+
+model UsuariosApp {
+  id          Int      @id @default(autoincrement())
+  token       String
+  dispositivo String   @unique
+  update      DateTime @default(now())
 }
 
 enum Evento_Estado {
