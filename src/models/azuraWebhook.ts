@@ -1,4 +1,4 @@
-export interface AzuraWebhook {
+export interface AzuraResp {
   now_playing: MetaSong;
   playing_next: MetaSong;
   song_history: MetaSong[];

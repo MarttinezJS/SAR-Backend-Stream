@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import {
-  azuraWebhook,
+  AzuraResp,
+  getNowPlaying,
   onClose,
   onMessage,
   onOpen,
@@ -17,7 +18,7 @@ app.use("*", (c, next) => {
   console.info(`${new Date(Date.now())} ${c.req.path} | ${c.req.method}`);
   return next();
 });
-app.post("/webhook", azuraWebhook);
+app.post("/webhook", AzuraResp);
 app.get(
   "/ws",
   upgradeWebSocket((c) => {
@@ -29,6 +30,9 @@ app.get(
   })
 );
 app.get("/stream/points", pointsController);
+
+// Azura
+app.get("/azura/now-playing", getNowPlaying);
 
 const server = Bun.serve({
   fetch: app.fetch,
