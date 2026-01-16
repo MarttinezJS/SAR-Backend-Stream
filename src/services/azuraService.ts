@@ -1,5 +1,6 @@
 import { Axios } from "axios";
-import { AzuraPoint, AzuraResp, ErrorResp } from "../models";
+import { AzuraPoint, AzuraResp, ErrorResp, MetaSong, Queue } from "../models";
+import { hoursAgo } from "../helpers/hoursAgo";
 
 export class AzuraService {
   private static client = new Axios({
@@ -43,9 +44,11 @@ export class AzuraService {
     };
   }
 
-  static async getSongList() {
+  static async getHistory(): Promise<ErrorResp<any>> {
     const { data, status } = await this.client.get(
-      `/nowplaying/${Bun.env.AZURA_STATION_ID}`
+      `/station/${Bun.env.AZURA_STATION_ID}/history?start=${hoursAgo(
+        0
+      )}&end=${hoursAgo(1)}`
     );
 
     if (status != 200) {
@@ -56,6 +59,44 @@ export class AzuraService {
         meta: data as any,
       };
     }
+    const songs = JSON.parse(data) as MetaSong[];
+    return {
+      isError: false,
+      message: "Historial de reproducción",
+      data: songs.map(({ duration, played_at, song, sh_id }) => ({
+        song,
+        playedAt: new Date(played_at * 1000).toISOString(),
+        duration,
+        sh_id,
+      })),
+    };
+  }
+
+  static async getQueue(): Promise<ErrorResp<any>> {
+    const { data, status } = await this.client.get(
+      `/station/${Bun.env.AZURA_STATION_ID}/queue`
+    );
+
+    if (status != 200) {
+      return {
+        isError: true,
+        message: "Error al en azura.",
+        statusCode: status as any,
+        meta: data as any,
+      };
+    }
+    const queues = JSON.parse(data) as Queue[];
+
+    return {
+      isError: false,
+      message: "Listado de canciones",
+      data: queues.map(({ cued_at, played_at, duration, song }) => ({
+        cuedAt: new Date(cued_at * 1000).toISOString(),
+        playedAt: new Date(played_at * 1000).toISOString(),
+        duration,
+        song,
+      })),
+    };
   }
   static async getPoints(): Promise<
     ErrorResp<{ url: string; name: string }[]>

@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import {
+  azuraHistory,
   AzuraResp,
   getNowPlaying,
   onClose,
@@ -33,6 +34,7 @@ app.get("/stream/points", pointsController);
 
 // Azura
 app.get("/azura/now-playing", getNowPlaying);
+app.get("/azura/history", azuraHistory);
 
 const server = Bun.serve({
   fetch: app.fetch,

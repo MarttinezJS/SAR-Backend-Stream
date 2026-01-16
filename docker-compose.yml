@@ -17,4 +17,7 @@ services:
     environment:
       PORT: 80
       DATABASE_URL: $DATABASE_URL
+      AZURA_API_KEY: $AZURA_API_KEY
+      AZURA_API_URL: $AZURA_API_URL
+      AZURA_STATION_ID: $AZURA_STATION_ID
 
