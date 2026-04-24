@@ -4,12 +4,12 @@ import {
   PrismaClientUnknownRequestError,
   PrismaClientRustPanicError,
   PrismaClientValidationError,
-} from "../../generated/client/runtime/library";
+} from "../../generated/client/runtime/client";
 import prismaClient from "../helpers/prismaClient";
 import { ErrorResp } from "../models";
 
 export const openPrisma = async <T extends any>(
-  callback: () => Promise<T[] | T>
+  callback: () => Promise<T[] | T>,
 ): Promise<ErrorResp<T>> => {
   let resp: ErrorResp<T> = {
     isError: false,

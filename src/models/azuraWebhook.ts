@@ -1,4 +1,6 @@
-export interface AzuraWebhook {
+import { MetaSong } from "./song";
+
+export interface AzuraResp {
   now_playing: MetaSong;
   playing_next: MetaSong;
   song_history: MetaSong[];
@@ -7,31 +9,6 @@ export interface AzuraWebhook {
   station: Station;
   listeners: Listeners;
   live: Live;
-}
-
-interface MetaSong {
-  sh_id: number;
-  played_at: number;
-  duration: number;
-  playlist: string;
-  streamer: string;
-  is_request: boolean;
-  song: Song;
-  elapsed: number;
-  remaining: number;
-}
-
-interface Song {
-  id: string;
-  art: string;
-  custom_fields: [];
-  text: string;
-  artist: string;
-  title: string;
-  album: string;
-  genre: string;
-  isrc: string;
-  lyrics: string;
 }
 
 export interface Listeners {

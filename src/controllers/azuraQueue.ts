@@ -1,8 +1,8 @@
 import { Context, Env } from "hono";
 import { AzuraService } from "../services";
 
-export const pointsController = async (context: Context<Env, "", {}>) => {
-  const resp = await AzuraService.getPoints();
+export const azuraHistory = async (context: Context<Env, "", {}>) => {
+  const resp = await AzuraService.getHistory();
   return context.json(
     {
       error: resp.isError,

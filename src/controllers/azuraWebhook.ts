@@ -1,12 +1,12 @@
 import { Context, Env } from "hono";
-import { AzuraWebhook, getUserTokens } from "../models";
+import { AzuraResp, getUserTokens } from "../models";
 import { socket } from "..";
 import { UsuariosApp } from "../../generated/client";
 import { fm } from "../config";
 import { BatchResponse } from "firebase-admin/messaging";
 
-export const azuraWebhook = async (context: Context<Env, "", {}>) => {
-  const body = await context.req.json<AzuraWebhook>();
+export const AzuraResp = async (context: Context<Env, "", {}>) => {
+  const body = await context.req.json<AzuraResp>();
   const resp = await getUserTokens();
   const users = resp.data as UsuariosApp[];
 
