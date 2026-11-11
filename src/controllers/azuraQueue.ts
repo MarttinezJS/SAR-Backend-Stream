@@ -1,4 +1,5 @@
 import { Context, Env } from "hono";
+import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { AzuraService } from "../services";
 
 export const azuraHistory = async (context: Context<Env, "", {}>) => {
@@ -11,6 +12,6 @@ export const azuraHistory = async (context: Context<Env, "", {}>) => {
       body: resp.data,
       meta: resp.meta,
     },
-    resp.statusCode
+    (resp.statusCode ?? 500) as ContentfulStatusCode
   );
 };

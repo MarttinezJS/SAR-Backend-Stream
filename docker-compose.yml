@@ -10,8 +10,6 @@ services:
     ports:
       - "6000:80/tcp"
     restart: always
-    volumes:
-      - ~/SigueAdelanteRadio/posts/temp:/usr/app/generated/temp
     networks:
       - sigue-adelante-radio
     environment:
@@ -20,4 +18,6 @@ services:
       AZURA_API_KEY: $AZURA_API_KEY
       AZURA_API_URL: $AZURA_API_URL
       AZURA_STATION_ID: $AZURA_STATION_ID
+      WEBHOOK_USER: $WEBHOOK_USER
+      WEBHOOK_PASSWORD: $WEBHOOK_PASSWORD
 

@@ -1,43 +1,41 @@
 import { Context, Env } from "hono";
-import { AzuraResp, getUserTokens } from "../models";
-import { socket } from "..";
+import { getUserTokens, type AzuraResp } from "../models";
 import { UsuariosApp } from "../../generated/client";
 import { fm } from "../config";
-import { BatchResponse } from "firebase-admin/messaging";
+import { broadcast } from "./websocket";
 
-export const AzuraResp = async (context: Context<Env, "", {}>) => {
-  const body = await context.req.json<AzuraResp>();
+const notifyLive = async (live: AzuraResp["live"]) => {
   const resp = await getUserTokens();
-  const users = resp.data as UsuariosApp[];
+  const users = resp.data as UsuariosApp[] | undefined;
+  if (resp.isError || !users?.length) return;
 
-  if (users != null && body.live.is_live) {
-    const tokens = users.map((user) => user.token);
-    const fmResp = (await fm
-      .sendEachForMulticast({
-        tokens,
-        notification: {
-          title: "Estamos en vivo!!!",
-          body: `Conéctate con ${body.live.streamer_name}`,
-          imageUrl: body.live.art,
-        },
-      })
-      .catch((e) => {
-        console.log(e);
-      })) as BatchResponse;
-    console.warn(
-      "\n=============================================================================",
-      `\n================================= ${fmResp.failureCount} fail ===================================`
-    );
+  try {
+    const fmResp = await fm.sendEachForMulticast({
+      tokens: users.map((user) => user.token),
+      notification: {
+        title: "Estamos en vivo!!!",
+        body: `Conéctate con ${live.streamer_name}`,
+        imageUrl: live.art,
+      },
+    });
+    console.warn(`Push "en vivo": ${fmResp.failureCount} fallidos.`);
     fmResp.responses.forEach((resp) => {
       if (resp.error != null) {
-        console.warn(`--> ${resp.error?.code} | ${resp.error?.message}`);
+        console.warn(`--> ${resp.error.code} | ${resp.error.message}`);
       }
     });
-    console.warn(
-      "\n============================================================================="
-    );
+  } catch (error) {
+    console.error("Error enviando push:", error);
   }
-  socket.send(JSON.stringify(body));
+};
+
+export const azuraWebhook = async (context: Context<Env, "", {}>) => {
+  const body = await context.req.json<AzuraResp>();
+
+  if (body.live?.is_live) {
+    await notifyLive(body.live);
+  }
+  broadcast(JSON.stringify(body));
   return context.json(
     {
       error: false,

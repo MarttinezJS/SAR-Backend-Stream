@@ -1,7 +1,17 @@
-import { ServerWebSocket } from "bun";
-import { WSContext, WSMessageReceive } from "hono/ws";
+import { Server, ServerWebSocket } from "bun";
+import { WSContext } from "hono/ws";
 
 const topic = "song-history";
+let server: Server<unknown> | undefined;
+
+export const setWsServer = (bunServer: Server<unknown>) => {
+  server = bunServer;
+};
+
+/** Envía un mensaje a todos los oyentes conectados. Solo lo usa el servidor. */
+export const broadcast = (data: string) => {
+  server?.publish(topic, data);
+};
 
 export const onOpen = (event: Event, ws: WSContext<unknown>) => {
   const rawWs = ws.raw as ServerWebSocket;
@@ -11,14 +21,9 @@ export const onOpen = (event: Event, ws: WSContext<unknown>) => {
   );
 };
 
-export const onMessage = (
-  event: MessageEvent<WSMessageReceive>,
-  ws: WSContext<unknown>
-) => {
-  const rawWs = ws.raw as ServerWebSocket;
-  console.info(`${new Date(Date.now())} | ${rawWs.remoteAddress} publish.`);
-  rawWs.publish(topic, event.data.toString());
-};
+// Los clientes solo escuchan: se ignoran sus mensajes para que nadie pueda
+// difundir datos falsos a los demás oyentes.
+export const onMessage = () => {};
 
 export const onClose = (event: CloseEvent, ws: WSContext<unknown>) => {
   const rawWs = ws.raw as ServerWebSocket;

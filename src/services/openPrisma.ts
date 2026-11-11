@@ -5,7 +5,6 @@ import {
   PrismaClientRustPanicError,
   PrismaClientValidationError,
 } from "../../generated/client/runtime/client";
-import prismaClient from "../helpers/prismaClient";
 import { ErrorResp } from "../models";
 
 export const openPrisma = async <T extends any>(
@@ -16,7 +15,6 @@ export const openPrisma = async <T extends any>(
     message: "",
   };
   try {
-    await prismaClient.$connect();
     const data = await callback();
     resp.statusCode = data instanceof Array && data.length == 0 ? 204 : 200;
     resp.data = data;
@@ -55,8 +53,6 @@ export const openPrisma = async <T extends any>(
         statusCode: error instanceof PrismaClientRustPanicError ? 500 : 400,
       };
     }
-  } finally {
-    prismaClient.$disconnect();
   }
   return resp;
 };
